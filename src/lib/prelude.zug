@@ -1,0 +1,9 @@
+doc .. ,We add the useful alias "nil" for "..".,
+let nil ..
+
+doc nil ,Pack and unpack - a.k.a. currying.,
+def .array unpack f xs. .array eval .join .list f. xs..
+doc unpack ,Use unpack to provide an array of arguments to a function. Example `unpack add [1 2 3]`.,
+
+def .array pack f .. xs. .array f xs.
+doc pack ,Use pack to provide distinct arguments to a function which takes an array. Example `pack tail 1 2`.,

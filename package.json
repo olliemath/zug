@@ -1,0 +1,49 @@
+{
+  "name": "zug",
+  "version": "0.2.1",
+  "description": "A mobile-friendly language for programming on the go!",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava",
+    "dev": "ts-node src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olliemath/zug.git"
+  },
+  "author": "olliemath (oliver.margetts@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/olliemath/zug/issues"
+  },
+  "homepage": "https://github.com/olliemath/zug#readme",
+  "devDependencies": {
+    "@ava/typescript": "^1.1.1",
+    "@types/node": "^15.6.2",
+    "@types/prompt-sync": "^4.1.0",
+    "@types/prompt-sync-history": "^1.0.1",
+    "ava": "^3.15.0",
+    "prettier": "^2.3.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  },
+  "dependencies": {
+    "prompt-sync": "^4.2.0",
+    "prompt-sync-history": "^1.0.1"
+  },
+  "ava": {
+    "extensions": {
+      "ts": "module"
+    },
+    "nonSemVerExperiments": {
+      "configurableModuleFormat": true
+    },
+    "nodeArguments": [
+      "--loader=ts-node/esm"
+    ]
+  },
+  "moduleDirectories": [
+    "node_modules",
+    "src"
+  ]
+}
