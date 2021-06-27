@@ -67,4 +67,5 @@ your computer than any other language.
 - [ ] New release. More docs.
 
 - [ ] Editor support: vi
-- [ ] Editor support: vscode
+- [x] Editor support: vscode
+- [ ] Publish vscode support to git
