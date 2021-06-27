@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "ava",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "build": "rm -rf ./dist && tsc -p . && cp ./src/lib/*.zug ./dist/lib/"
+  },
+  "bin": {
+    "zug": "./dist/index.js"
   },
   "repository": {
     "type": "git",

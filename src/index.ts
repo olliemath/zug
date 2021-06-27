@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import PromptSync from "prompt-sync";
 import History from "prompt-sync-history";
 
