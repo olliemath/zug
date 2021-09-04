@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-import PromptSync from "prompt-sync";
-import History from "prompt-sync-history";
+import { createInterface, ReadLine } from "readline";
 
 import { handleError, redText } from "./libzug/builtins/imports";
 // @ts-ignore
@@ -12,14 +11,16 @@ import { LErr, lvalRead } from "./libzug/lval";
 main();
 
 function main() {
-  const history = History(".zug-history", 1000);
-  const promptSync = PromptSync({
-    sigint: false,
-    // @ts-ignore  (seems to be misisng from typing)
-    eot: true,
-    history: history,
+  // Set up line reader
+  const readline = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: true,
   });
+  readline.setPrompt("zug> ");
+
   const interpreter = new Interpreter();
+
   let res = loadFile(interpreter.env, "prelude", true);
   if (res instanceof LErr) {
     throw new Error("Failed to load prelude: " + res.s);
@@ -27,27 +28,36 @@ function main() {
 
   console.log("zug version 0.2.0");
   console.log("press ctrl+d to exit");
+  readline.prompt();
 
-  while (true) {
-    const line = promptSync("zug> ");
-    if (!line) {
-      continue;
+  readline.on("line", (line) => {
+    if (line) {
+      try {
+        var tree = parser.parse(line);
+      } catch (err) {
+        handleError(err, line);
+        readline.prompt();
+        return;
+      }
+
+      let result = interpreter.interpret(lvalRead(tree));
+      if (result.type === "ERROR") {
+        console.log(redText(result.print()));
+      } else {
+        console.log(result.print());
+      }
     }
+    readline.prompt();
+  });
 
-    try {
-      var tree = parser.parse(line);
-    } catch (err) {
-      handleError(err, line);
-      continue;
-    }
+  readline.on("SIGINT", () => {
+    // @ts-ignore
+    readline.clearLine();
+    readline.prompt();
+  });
 
-    let result = interpreter.interpret(lvalRead(tree));
-    if (result.type === "ERROR") {
-      console.log(redText(result.print()));
-    } else {
-      console.log(result.print());
-    }
-  }
-
-  history.save();
+  readline.on("close", () => {
+    console.log("goodbye!");
+    process.exit(0);
+  });
 }

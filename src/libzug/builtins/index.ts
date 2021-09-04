@@ -4,7 +4,7 @@ import { def, doc, lambda, let_, set } from "./defn";
 import { import_ } from "./imports";
 import { Builtin, LCallable, LObject } from "../lval";
 import { getattr, keys, object, values } from "./object";
-import { env as getenv, exit, input, print } from "./sys";
+import { env as getenv, exit, print } from "./sys";
 import { list, head, tail, join, evaluate } from "./array";
 
 export default function seedEnv(env?: LObject): LObject {
@@ -165,12 +165,12 @@ export default function seedEnv(env?: LObject): LObject {
     print,
     "print [..strings]\n" + "Print the strings to stdout."
   );
-  newBuiltin(
-    env,
-    "input",
-    input,
-    "input [string?]\n" + "Receive input from stdin, possibly with a prompt string."
-  );
+  // newBuiltin(
+  //   env,
+  //   "input",
+  //   input,
+  //   "input [string?]\n" + "Receive input from stdin, possibly with a prompt string."
+  // );
   newBuiltin(
     env,
     "import",

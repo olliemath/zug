@@ -1,4 +1,3 @@
-import PromptSync from "prompt-sync";
 import { LVal, LObject, LErr, LNum, NIL, LNil, LString } from "../lval";
 
 export function print(env: LObject, args: Array<LVal>): LNil {
@@ -6,23 +5,23 @@ export function print(env: LObject, args: Array<LVal>): LNil {
   return NIL;
 }
 
-export function input(env: LObject, args: Array<LVal>): LVal {
-
-  let prompt: string;
-  if (args.length === 0) {
-    prompt = "";
-  } else if (args.length === 1) {
-    const arg = args[0];
-    if (!(arg instanceof LString)) {
-      return new LErr(`TypeError: input takes STRING, not ${arg.type}`);
-    }
-    prompt = arg.s;
-  } else {
-    return new LErr(`TypeError: input takes at most one argument. Received ${args.length}`)
-  }
-
-  return new LString(PromptSync()(prompt))
-}
+// export function input(env: LObject, args: Array<LVal>): LVal {
+//
+//   let prompt: string;
+//   if (args.length === 0) {
+//     prompt = "";
+//   } else if (args.length === 1) {
+//     const arg = args[0];
+//     if (!(arg instanceof LString)) {
+//       return new LErr(`TypeError: input takes STRING, not ${arg.type}`);
+//     }
+//     prompt = arg.s;
+//   } else {
+//     return new LErr(`TypeError: input takes at most one argument. Received ${args.length}`)
+//   }
+//
+//   return new LString(PromptSync()(prompt))
+// }
 
 
 export function env(env: LObject, args: Array<LVal>) {
