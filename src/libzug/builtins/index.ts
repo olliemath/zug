@@ -190,7 +190,7 @@ export default function seedEnv(env?: LObject): LObject {
     env,
     "getattr",
     getattr,
-    "getattr [object string]\n" + "Get the given attribute on the object."
+    "getattr [object string (default)]\n" + "Get the given attribute on the object."
   );
   newBuiltin(
     env,

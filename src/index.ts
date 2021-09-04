@@ -2,12 +2,12 @@
 import PromptSync from "prompt-sync";
 import History from "prompt-sync-history";
 
-import { handleError, redText } from "./builtins/imports";
+import { handleError, redText } from "./libzug/builtins/imports";
 // @ts-ignore
-import parser from "./grammar/zug.js";
-import Interpreter from "./interpreter";
-import { loadFile } from "./lib/load";
-import { LErr, lvalRead } from "./lval";
+import parser from "./libzug/grammar/zug.js";
+import Interpreter from "./libzug/interpreter";
+import { loadFile } from "./libzug/lib/load";
+import { LErr, lvalRead } from "./libzug/lval";
 
 main();
 
