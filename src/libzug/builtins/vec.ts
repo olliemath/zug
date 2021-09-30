@@ -1,7 +1,7 @@
-import { LErr, LObject, LVal, LArray, SExpr } from "../lval";
+import { LErr, LObject, LVal, LVec, SExpr } from "../lval";
 
 export function list(env: LObject, args: Array<LVal>): LVal {
-  return new LArray(args);
+  return new LVec(args);
 }
 
 export function head(env: LObject, args: Array<LVal>): LVal {
@@ -10,7 +10,7 @@ export function head(env: LObject, args: Array<LVal>): LVal {
   }
 
   let q = args[0];
-  if (!(q instanceof LArray)) {
+  if (!(q instanceof LVec)) {
     return new LErr(`TypeError: head takes an Array, not ${q.type}`);
   }
 
@@ -18,7 +18,7 @@ export function head(env: LObject, args: Array<LVal>): LVal {
     return new LErr("ValueError: head passed []");
   }
 
-  return new LArray([q.cell[0]]);
+  return new LVec([q.cell[0]]);
 }
 
 export function tail(env: LObject, args: Array<LVal>): LVal {
@@ -27,7 +27,7 @@ export function tail(env: LObject, args: Array<LVal>): LVal {
   }
 
   let q = args[0];
-  if (!(q instanceof LArray)) {
+  if (!(q instanceof LVec)) {
     return new LErr(`TypeError: tail takes an Array, not ${q.type}`);
   }
 
@@ -35,19 +35,19 @@ export function tail(env: LObject, args: Array<LVal>): LVal {
     return new LErr("ValueError: tail passed , ,");
   }
 
-  return new LArray(q.cell.slice(1));
+  return new LVec(q.cell.slice(1));
 }
 
 export function join(env: LObject, args: Array<LVal>): LVal {
   let children: Array<LVal> = [];
   for (let arg of args) {
-    if (!(arg instanceof LArray)) {
-      return new LErr(`TypeError: join takes ARRAY, not ${arg.type}`);
+    if (!(arg instanceof LVec)) {
+      return new LErr(`TypeError: join takes VEC, not ${arg.type}`);
     }
     children.push(...arg.cell);
   }
 
-  return new LArray(children);
+  return new LVec(children);
 }
 
 export function evaluate(env: LObject, args: Array<LVal>): LVal {
@@ -56,7 +56,7 @@ export function evaluate(env: LObject, args: Array<LVal>): LVal {
   }
 
   let q = args[0];
-  if (!(q instanceof LArray)) {
+  if (!(q instanceof LVec)) {
     return new LErr(`TypeError: eval takes an Array, not ${q.type}`);
   }
 

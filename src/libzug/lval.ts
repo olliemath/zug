@@ -1,5 +1,5 @@
 import { request } from "https";
-import { evaluate } from "./builtins/array";
+import { evaluate } from "./builtins/vec";
 
 export interface LVal {
   type: string;
@@ -81,7 +81,7 @@ export class LString implements LVal {
     this.s = s;
   }
   print() {
-    return this.s;
+    return "," + this.s + ",";
   }
   equals(other: LVal): boolean {
     return other instanceof LString && this.s === other.s;
@@ -95,6 +95,9 @@ export class LErr extends LString {
   type = "ERROR";
   docs = "A Zug error.";
 
+  print() {
+    return this.s;
+  }
   equals(other: LVal): boolean {
     return other instanceof LErr && this.s === other.s;
   }
@@ -105,6 +108,9 @@ export class LSym extends LString {
   type = "SYM";
   docs = "A Zug symbol.";
 
+  print() {
+    return this.s;
+  }
   equals(other: LVal): boolean {
     return other instanceof LString && this.s === other.s;
   }
@@ -153,8 +159,8 @@ export class SExpr implements LVal {
     // Ensure First Element is function
     if (first instanceof Builtin || first instanceof LFun) {
       let args: Array<LVal>;
-      if (first.name === "array") {
-        // The array literal is the *only* function not to have its arguments evaluated
+      if (first.name === "vec") {
+        // The vec literal is the *only* function not to have its arguments evaluated
         args = this.cell.slice(1);
       } else if (first.name === "let") {
         args = [this.cell[1]];
@@ -183,21 +189,21 @@ export class SExpr implements LVal {
   }
 }
 
-export class LArray implements LVal {
-  /* LArray represents a zug array ("quoted expression"). */
-  type = "ARRAY";
+export class LVec implements LVal {
+  /* LVec represents a zug vec ("quoted expression"). */
+  type = "VEC";
   cell: Array<LVal>;
-  docs = "A Zug array.";
+  docs = "A Zug vec.";
 
   constructor(children?: Array<LVal>) {
     this.cell = children ? children : [];
   }
   print(): string {
     let body = this.cell.map((c) => c.print()).join(" ");
-    return "[" + body + "]";
+    return "(" + body + ")";
   }
   equals(other: LVal): boolean {
-    if (!(other instanceof LArray && other.cell.length === this.cell.length)) {
+    if (!(other instanceof LVec && other.cell.length === this.cell.length)) {
       return false;
     }
     for (let i = 0; i < this.cell.length; i++) {
@@ -237,11 +243,11 @@ export class LFun implements LVal {
   type = "FUN";
   name: string | null;
   env: LObject;
-  formals: LArray;
-  body: LArray;
+  formals: LVec;
+  body: LVec;
   docs: string;
 
-  constructor(env: LObject, formals: LArray, body: LArray, name?: string) {
+  constructor(env: LObject, formals: LVec, body: LVec, name?: string) {
     this.name = name ? name : null;
     this.env = env;
     this.formals = formals;
@@ -285,7 +291,7 @@ export class LFun implements LVal {
       } else {
         // The remaining args are for a variable arg function
         // @ts-ignore  symbol type-checked when constructing LFun
-        env.set(this.formals.cell[bound + 1].s, new LArray(args.slice(i)));
+        env.set(this.formals.cell[bound + 1].s, new LVec(args.slice(i)));
         bound = total;
         break;
       }
@@ -296,7 +302,7 @@ export class LFun implements LVal {
     }
 
     // New partial function - create a new Array for remaining args
-    const unbound = new LArray(this.formals.cell.slice(bound));
+    const unbound = new LVec(this.formals.cell.slice(bound));
     return new LFun(env, unbound, this.body);
   }
 }
@@ -319,7 +325,7 @@ export class LObject implements LVal {
     for (let [key, val] of this.map.entries()) {
       body.push(key + ":" + val.print());
     }
-    return "," + body.join(" ") + ",";
+    return "(" + body.join(" ") + ")";
   }
   equals(other: LVal) {
     if (!(other instanceof LObject)) {
@@ -391,9 +397,10 @@ export function lvalRead(token: any): LVal {
       return FALSE;
     case "SEXPR":
       return new SExpr(token.value.map((c: any) => lvalRead(c)));
-    case "ARRAY":
-      return new LArray(token.value.map((c: any) => lvalRead(c)));
+    case "VEC":
+      return new LVec(token.value.map((c: any) => lvalRead(c)));
     default:
+      console.log(token);
       throw new Error(`ZugInternalError: unknown type: ${token.type}`);
   }
 }

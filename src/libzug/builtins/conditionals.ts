@@ -1,6 +1,6 @@
 import {
   FALSE,
-  LArray,
+  LVec,
   LBool,
   LErr,
   LNum,
@@ -24,8 +24,8 @@ export function if_(env: LObject, args: Array<LVal>): LVal {
     return new LErr(`TypeError: if takes BOOL, not ${first.type}`);
   }
 
-  if (!(first instanceof LArray)) {
-    return new LErr(`TypeError: if takes ARRAY, not ${first.type}`);
+  if (!(first instanceof LVec)) {
+    return new LErr(`TypeError: if takes VEC, not ${first.type}`);
   }
 
   if (cond.bool) {
@@ -37,8 +37,8 @@ export function if_(env: LObject, args: Array<LVal>): LVal {
   }
 
   const second = args[2];
-  if (!(second instanceof LArray)) {
-    return new LErr(`TypeError: if takes ARRAY, not ${second.type}`);
+  if (!(second instanceof LVec)) {
+    return new LErr(`TypeError: if takes VEC, not ${second.type}`);
   }
 
   return new SExpr(second.cell).eval(env);

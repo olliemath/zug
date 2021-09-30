@@ -1,4 +1,4 @@
-import { LErr, LFun, LObject, LString, LSym, LVal, LArray, NIL } from "../lval";
+import { LErr, LFun, LObject, LString, LSym, LVal, LVec, NIL } from "../lval";
 
 export function let_(env: LObject, args: Array<LVal>): LVal {
   if (args.length != 2) {
@@ -21,45 +21,6 @@ export function let_(env: LObject, args: Array<LVal>): LVal {
   return NIL;
 }
 
-export function set(env: LObject, args: Array<LVal>): LVal {
-  if (args.length !== 2) {
-    return new LErr(`TypeError: set takes 2 arguments, not ${args.length}`);
-  }
-
-  const syms = args[0];
-  const vals = args[1];
-  if (!(syms instanceof LArray && vals instanceof LArray)) {
-    return new LErr(
-      `TypeError: set takes ARRAY, ARRAY not ${syms.type}, ${vals.type}`
-    );
-  }
-
-  for (let sym of syms.cell) {
-    if (!(sym instanceof LSym || sym instanceof LString)) {
-      return new LErr(`TypeError: set assings to SYM/STRING not ${sym.type}`);
-    }
-  }
-
-  if (syms.cell.length != vals.cell.length) {
-    return new LErr(
-      `TypeError: def requires same number of symbols and values`
-    );
-  }
-
-  for (let i = 0; i < syms.cell.length; i++) {
-    const sym = syms.cell[i];
-    if (sym instanceof LSym) {
-      env.set(sym.s, vals.cell[i]);
-    } else if (sym instanceof LString) {
-      env.set(sym.s, vals.cell[i]);
-    } else {
-      throw new Error(`InternalError: unhandled assignment ${sym}`);
-    }
-  }
-
-  return NIL;
-}
-
 export function lambda(env: LObject, args: Array<LVal>, isDef?: boolean): LVal {
   if (!(args.length === 2)) {
     return new LErr(
@@ -68,11 +29,11 @@ export function lambda(env: LObject, args: Array<LVal>, isDef?: boolean): LVal {
   }
   const iFormals = args[0];
   const body = args[1];
-  if (!(iFormals instanceof LArray && body instanceof LArray)) {
-    return new LErr("TypeError: lambda requires ARRAY as its arguments");
+  if (!(iFormals instanceof LVec && body instanceof LVec)) {
+    return new LErr("TypeError: lambda requires VEC as its arguments");
   }
 
-  let formals: LArray = isDef ? new LArray(iFormals.cell.slice(1)) : iFormals;
+  let formals: LVec = isDef ? new LVec(iFormals.cell.slice(1)) : iFormals;
 
   let varargs = false;
   for (let i = 0; i < formals.cell.length; i++) {
@@ -104,10 +65,6 @@ export function lambda(env: LObject, args: Array<LVal>, isDef?: boolean): LVal {
   }
 
   return f;
-}
-
-export function def(env: LObject, args: Array<LVal>): LVal {
-  return lambda(env, args, true);
 }
 
 export function doc(env: LObject, args: Array<LVal>): LVal {

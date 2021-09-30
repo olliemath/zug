@@ -1,53 +1,53 @@
-import { add, sub, mul, div } from "./arithmetic";
+import { add, sub, mul, div, sqrt } from "./arithmetic";
 import { if_, eq, le, ge, lt, gt } from "./conditionals";
-import { def, doc, lambda, let_, set } from "./defn";
+import { doc, lambda, let_ } from "./defn";
 import { import_ } from "./imports";
 import { Builtin, LCallable, LObject } from "../lval";
 import { getattr, keys, object, values } from "./object";
 import { env as getenv, exit, print } from "./sys";
-import { list, head, tail, join, evaluate } from "./array";
+import { list, head, tail, join, evaluate } from "./vec";
 
 export default function seedEnv(env?: LObject): LObject {
   env = env ? env : new LObject([], []);
   // lists
   newBuiltin(
     env,
-    "array",
+    "vec",
     list,
-    "array [..xs]\n" +
-      "Create a new array from the following expression without evaluating it.\n" +
-      "Example:\n  > array .add 1 2.\n  [.add 1 2.]"
+    "vec [..xs]\n" +
+      "Create a new vec from the following expression without evaluating it.\n" +
+      "Example:\n  > vec .add 1 2.\n  [.add 1 2.]"
   );
   newBuiltin(
     env,
     "list",
     list,
-    "list [..xs]\n" + "Create a new array from the provided arguments.\n" +
+    "list [..xs]\n" + "Create a new vec from the provided arguments.\n" +
     "Example:\n  > list .add 1 2.\n  [3]"
   );
   newBuiltin(
     env,
     "head",
     head,
-    "head [array]\n" + "Get the first entry in an array."
+    "head [vec]\n" + "Get the first entry in an vec."
   );
   newBuiltin(
     env,
     "tail",
     tail,
-    "tail [array]\n" + "Create a new array without the first element."
+    "tail [vec]\n" + "Create a new vec without the first element."
   );
   newBuiltin(
     env,
     "join",
     join,
-    "join [..arrays]\n" + "Concatenate the provided arrays."
+    "join [..vecs]\n" + "Concatenate the provided vecs."
   );
   newBuiltin(
     env,
     "eval",
     evaluate,
-    "eval [array]\n" + "Evaluate the array as a standard expression."
+    "eval [vec]\n" + "Evaluate the vec as a standard expression."
   );
   // zip .. unzip ..
   // arithmetic
@@ -72,13 +72,20 @@ export default function seedEnv(env?: LObject): LObject {
     "div [..xs]\n" +
       "Divide the first provided number by all subsequent numbers."
   );
+  newBuiltin(
+    env,
+    "sqrt",
+    sqrt,
+    "sqrt [x]\n" +
+      "Take the square root of the number."
+  );
   // comparison
   newBuiltin(
     env,
     "if",
     if_,
-    "if [bool array array?]\n" +
-      "Evaluate and return the first array if bool is true, else the second."
+    "if [bool vec vec?]\n" +
+      "Evaluate and return the first vec if bool is true, else the second."
   );
   newBuiltin(
     env,
@@ -119,24 +126,10 @@ export default function seedEnv(env?: LObject): LObject {
   );
   newBuiltin(
     env,
-    "set",
-    set,
-    "set [array array]\n" +
-      "Assign the elements of the second array symbols of the first."
-  );
-  newBuiltin(
-    env,
     "lambda",
     lambda,
-    "lambda [array array]\n" +
-      "Create a new function with args and body arrays."
-  );
-  newBuiltin(
-    env,
-    "def",
-    def,
-    "def [array array]\n" +
-      "Create a new function (see doc lambda), where the head of the first name is treated as the name, and the tail as the args."
+    "lambda [vec vec]\n" +
+      "Create a new function with args and body vecs."
   );
   newBuiltin(
     env,
@@ -183,7 +176,7 @@ export default function seedEnv(env?: LObject): LObject {
     env,
     "object",
     object,
-    "object [array array]\n" +
+    "object [vec vec]\n" +
       "Create a new object and set its attributes. See doc set."
   );
   newBuiltin(

@@ -82,3 +82,18 @@ export function div(env: LObject, args: Array<LVal>): LVal {
   }
   return new LNum(res);
 }
+
+export function sqrt(env: LObject, args: Array<LVal>): LVal {
+  if (args.length != 1) {
+    return new LErr(`sqrt takes exactly 1 argument, received ${args.length}`);
+  }
+
+  try {
+    var numbers = extractNumbers(args);
+  } catch (err) {
+    return new LErr(err.message);
+  }
+
+  const input = numbers[0];
+  return new LNum(Math.sqrt(input));
+}

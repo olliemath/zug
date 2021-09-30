@@ -15,7 +15,7 @@ sexpr
     = '.' l:lisp '.' { return {type: "SEXPR", value: l.value}; }
 
 qexpr
-    = '[' l:lisp ']' { return {type: "ARRAY", value: l.value}; }
+    = '(' l:lisp ')' { return {type: "VEC", value: l.value}; }
 
 wexpr
     = [ ]+ e: expr { return e; }

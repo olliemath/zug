@@ -1,8 +1,8 @@
 import test from "ava";
 
-import { add, sub, mul, div } from "../../builtins/arithmetic";
-import seedEnv from "../../builtins"
-import { LNum, LSym } from "../../lval";
+import { add, sub, mul, div } from "../../libzug/builtins/arithmetic";
+import seedEnv from "../../libzug/builtins"
+import { LNum, LSym } from "../../libzug/lval";
 
 test("arithmetic with no args is default value", (t) => {
   t.deepEqual(add(seedEnv(), []), new LNum(0));

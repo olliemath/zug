@@ -1,4 +1,4 @@
-import { LErr, LSym, LVal, LArray, SExpr } from "../lval";
+import { LErr, LSym, LVal, LVec, SExpr } from "../lval";
 
 export function typecheck(
   name: string,
@@ -22,7 +22,7 @@ export function typecheck(
     }
     if (
       symbolic.indexOf(i) !== -1 &&
-      (arg instanceof LArray || arg instanceof SExpr)
+      (arg instanceof LVec || arg instanceof SExpr)
     ) {
       for (let child of arg.cell) {
         if (!(child instanceof LSym)) {

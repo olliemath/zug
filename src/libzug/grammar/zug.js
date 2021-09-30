@@ -172,8 +172,8 @@ function peg$parse(input, options) {
   var peg$startRuleFunction = peg$parsestart;
 
   var peg$c0 = ".";
-  var peg$c1 = "[";
-  var peg$c2 = "]";
+  var peg$c1 = "(";
+  var peg$c2 = ")";
   var peg$c3 = ",";
   var peg$c4 = "..";
 
@@ -184,8 +184,8 @@ function peg$parse(input, options) {
   var peg$r4 = /^[^,]/;
 
   var peg$e0 = peg$literalExpectation(".", false);
-  var peg$e1 = peg$literalExpectation("[", false);
-  var peg$e2 = peg$literalExpectation("]", false);
+  var peg$e1 = peg$literalExpectation("(", false);
+  var peg$e2 = peg$literalExpectation(")", false);
   var peg$e3 = peg$classExpectation([" "], false, false);
   var peg$e4 = peg$classExpectation([["0", "9"]], false, false);
   var peg$e5 = peg$classExpectation([["a", "z"]], false, false);
@@ -202,7 +202,7 @@ function peg$parse(input, options) {
             return {type: "SEXPR", value: result};
         };
   var peg$f1 = function(l) { return {type: "SEXPR", value: l.value}; };
-  var peg$f2 = function(l) { return {type: "ARRAY", value: l.value}; };
+  var peg$f2 = function(l) { return {type: "VEC", value: l.value}; };
   var peg$f3 = function(e) { return e; };
   var peg$f4 = function(digits) { return {type: "NUMBER", value: parseInt(digits.join(""))}; };
   var peg$f5 = function(head, rest) {
@@ -446,7 +446,7 @@ function peg$parse(input, options) {
     var s0, s1, s2, s3;
 
     s0 = peg$currPos;
-    if (input.charCodeAt(peg$currPos) === 91) {
+    if (input.charCodeAt(peg$currPos) === 40) {
       s1 = peg$c1;
       peg$currPos++;
     } else {
@@ -456,7 +456,7 @@ function peg$parse(input, options) {
     if (s1 !== peg$FAILED) {
       s2 = peg$parselisp();
       if (s2 !== peg$FAILED) {
-        if (input.charCodeAt(peg$currPos) === 93) {
+        if (input.charCodeAt(peg$currPos) === 41) {
           s3 = peg$c2;
           peg$currPos++;
         } else {

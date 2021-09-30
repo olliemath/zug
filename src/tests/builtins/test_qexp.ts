@@ -1,15 +1,15 @@
 import test from "ava";
 
-import { head, tail, join } from "../../builtins/array";
-import seedEnv from "../../builtins"
-import { LNum, LArray } from "../../lval";
+import { head, tail, join } from "../../libzug/builtins/vec";
+import seedEnv from "../../libzug/builtins"
+import { LNum, LVec } from "../../libzug/lval";
 
-const someLArray = () => { return new LArray([new LNum(42)])};
-const tooMany = () => { return [someLArray(), someLArray()] };
+const someLVec = () => { return new LVec([new LNum(42)])};
+const tooMany = () => { return [someLVec(), someLVec()] };
 const tooFew = () => { return [] };
-const nil = () => { return [new LArray()]};
+const nil = () => { return [new LVec()]};
 const wrongType = () => { return [new LNum(42)]};
-const wrongType2 = () => { return [someLArray(), new LNum(42)]};
+const wrongType2 = () => { return [someLVec(), new LNum(42)]};
 
 
 test("head raises TypeError with bad args", (t) => {
@@ -33,5 +33,5 @@ test("join raises TypeError with bad args", (t) => {
 })
 
 test("join no args", (t) => {
-    t.deepEqual(join(seedEnv(), []), new LArray());
+    t.deepEqual(join(seedEnv(), []), new LVec());
 })

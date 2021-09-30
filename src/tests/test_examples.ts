@@ -1,8 +1,8 @@
 import test from "ava";
-import Interpreter from "../interpreter";
-import { lvalRead } from "../lval";
+import Interpreter from "../libzug/interpreter";
+import { lvalRead } from "../libzug/lval";
 // @ts-ignore
-import parser from "../grammar/zug.js";
+import parser from "../libzug/grammar/zug.js";
 
 const testExamples = (msg: string, cases: Array<Array<string>>) => {
   const total = cases.length;
@@ -49,36 +49,45 @@ testExamples("test arithmetic inverses", [
 ]);
 
 testExamples("test qexpressions", [
-  ["list 1 2 3 4", "[1 2 3 4]"],
-  [".array head .list 1 2 3 4..", "[head .list 1 2 3 4.]"],
-  ["eval .array head .list 1 2 3 4..", "[1]"],
-  ["tail .array tail tail tail.", "[tail tail]"],
-  ["eval .tail .array tail tail .array 5 6 7...", "[6 7]"],
-  ["eval .head .array .add 1 2. .add 10 20...", "3"],
+  ["list 1 2 3 4", "(1 2 3 4)"],
+  [".vec head .list 1 2 3 4..", "(head .list 1 2 3 4.)"],
+  ["eval .vec head .list 1 2 3 4..", "(1)"],
+  ["tail .vec tail tail tail.", "(tail tail)"],
+  ["eval .tail .vec tail tail .vec 5 6 7...", "(6 7)"],
+  ["eval .head .vec .add 1 2. .add 10 20...", "3"],
 ]);
 
 testExamples("test variables", [
-  ["set [a b] [1 2]", "nil"],
+  ["let a 1", "nil"],
+  ["let b 2", "nil"],
   ["a", "1"],
   ["b", "2"],
   ["let a 42", "nil"],
   ["a", "42"],
 ]);
 
-testPartialExamples("test variable errors", [
-  ["set [a b] 1", "TypeError"],
-  ["let [a] 1", "TypeError"],
-  ["set add sub 1 2", "TypeError"],
-  ["set .add. 1", "TypeError"],
+testPartialExamples("test object errors", [
+  ["let o .object (a b) (1).", "TypeError"],
+  ["let o .object (a) 1.", "TypeError"],
+  ["let o .object add sub 1 2.", "TypeError"],
+  ["let o .object .add. 1.", "TypeError"],
+]);
+
+testExamples("test objects", [
+  ["let o .object (a b) (1 2).", "nil"],
+  ["o", "(a:1 b:2)"],
+  ["getattr o ,a,", "1"],
+  ["keys o", "(,a, ,b,)"],
+  ["values o", "(1 2)"],
 ]);
 
 testExamples("test lambdas", [
-  ["let foo .lambda [a b] [sub .add a b. 1].", "nil"],
+  ["let foo .lambda (a b) (sub .add a b. 1).", "nil"],
   ["foo 5 5", "9"],
   ["foo 5 6", "10"],
   // These test that setting variables in our function has no effect
   ["let var 42", "nil"],
-  ["let setter .lambda [a] [let var a].", "nil"],
+  ["let setter .lambda .vec a. .vec let var a..", "nil"],
   ["setter 32", "nil"],
   ["var", "42"],
 ]);
@@ -99,8 +108,8 @@ testExamples("test conditionals", [
   ["lt ,2, ,1,", "false"],
   ["lt ,1, ,1,", "false"],
   // Using if
-  ["if .le 1 2. [1] [2]", "1"],
-  ["if .ge 1 2. [1] [2]", "2"],
+  ["if .le 1 2. (1) (2)", "1"],
+  ["if .ge 1 2. (1) (2)", "2"],
 ]);
 
 testPartialExamples("test conditional errors", [
@@ -110,5 +119,5 @@ testPartialExamples("test conditional errors", [
   ["ge .. ..", "TypeError"],
   ["ge 1", "TypeError"],
   ["ge 1 2 3", "TypeError"],
-  ["ge [1 2] [2 3]", "TypeError"],
+  ["ge (1 2) (2 3)", "TypeError"],
 ]);
